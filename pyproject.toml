@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "fastapi-version-openapi"
+version = "0.2.0"
+description = "Documentation version control"
+authors = ["Pavel Nekrasov <nekrasovp@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.scripts]
+build_spec = "app.build_spec:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.98.0"}
+pydantic = "^1.10.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
