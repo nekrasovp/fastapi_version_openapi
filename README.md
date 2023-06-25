@@ -8,13 +8,13 @@
   - [Init project](#init-project)
   - [Add fastapi](#add-fastapi)
   - [Create single-file FastAPI example](#create-single-file-fastapi-example)
-  - [Create the Export Script](#create-the-export-script)
+  - [Creating the export script](#creating-the-export-script)
   - [Export OpenAPI spec from FastAPI](#export-openapi-spec-from-fastapi)
-    - [Adding script to pyproject.toml](#adding-script-to-pyprojecttoml)
-    - [Runing script](#runing-script)
+    - [Add script to pyproject.toml](#add-script-to-pyprojecttoml)
+    - [Running script](#running-script)
     - [Increment version](#increment-version)
   - [Automate in your CI/CD pipeline](#automate-in-your-cicd-pipeline)
-    - [Example running script as part of CI/CD pipeline](#example-running-script-as-part-of-cicd-pipeline)
+    - [Example of running script as part of CI/CD pipeline](#example-of-running-script-as-part-of-cicd-pipeline)
 
 
 
@@ -44,28 +44,30 @@ poetry add fastapi[all]
 
 ## Create single-file FastAPI example
 
-Chances are that you’ll use the OpenAPI spec to generate documentation or code. It is important to add metadata to your FastAPI app so that the generated OpenAPI spec is complete.
+Chances are you'll be using the OpenAPI spec to generate documentation or code. It is important to add metadata to your FastAPI application so that the generated OpenAPI spec is complete.
 
-Firstly, you should tag our endpoints with tags to make sure they are grouped in logical operations. This example does not use routers, but if you do, you need to tag the router instead of the endpoint.
+Firstly, you should tag our endpoints to ensure that they are grouped into logical operations. This example does not use routers, but if you do, you will need to tag the router instead of the endpoint.
 
-Tags are used by documentation and code generators to group endpoints together. Tags may include spaces and special characters, but we recommend to keep the tags simple. It is common to use either lowercase or Capital Case for tags, like Items in our example.
+Tags are used by documentation and code generators to group endpoints. Tags can contain spaces and special characters, but we recommend that you keep them simple. It is common to use either lower or upper case for tags, such as Items in our example.
 
-In addition to tags, we’ll add a description and version metadata to our FastAPI app instance. The description and version will be used in the generated OpenAPI docs on the overview page. You can find the full list of metadata parameters in the FastAPI docs if you need to include additional details in your specification.
+In addition to tags, we'll add a description and version metadata to our FastAPI app instance. The description and version will be used in the generated OpenAPI documentation on the overview page. The full list of metadata parameters can be found in the FastAPI docs if you need to include additional details in your specification.
 
-## Create the Export Script
+## Creating the export script
 
-By default FastAPI will generate OpenAPI docs under /docs. You can try this out by running the app and navigating to http://localhost:8000/docs.
+By default FastAPI creates OpenAPI docs under /docs. You can test this by running the application and navigating to `http://localhost:8000/docs`.
 
-It is possible to get the OpenAPI JSON directly by navigating to /openapi.json, but we’ll want to extract the document programmatically in order to be able to automate the process. FastAPI does not support exporting the OpenAPI specification directly, but we’ll use a small script to extract it.
+It is possible to get the OpenAPI JSON directly by navigating to /openapi.json, but we'll want to extract the document programmatically to automate the process. FastAPI doesn't support exporting the OpenAPI specification directly, but we'll use a little script to extract it.
 
 ## Export OpenAPI spec from FastAPI
 
-### Adding script to pyproject.toml
+### Add script to pyproject.toml
 
+```sh
 [tool.poetry.scripts]
 build_spec = "app.build_spec:main"
+```
 
-### Runing script
+### Running script
 
 In pyproject.toml
 
@@ -74,13 +76,13 @@ In pyproject.toml
 version = "0.1.0"
 ```
 
-Run installed script:
+Run the installed script:
 
 ```sh
 poetry run build_spec
 ```
 
-This should create an `openapi.json` in `docs/0.1.0` directory.
+This should create an `openapi.json` in the `docs/0.1.0` directory.
 
 ```sh
 INFO: 📂 adding app to sys.path
@@ -92,20 +94,20 @@ INFO: 🧾 documentation version='0.1.0' written to docs/0.1.0/openapi.yaml
 
 ### Increment version
 
-Update basemodel and increment version in pyproject.toml
+Update `BaseModel` and increment `version` in `pyproject.toml`
 
 ```sh
 [tool.poetry]
 version = "0.2.0"
 ```
 
-Run script again:
+Run the script again:
 
 ```sh
 poetry run build_spec
 ```
 
-This should create an `openapi.json` in `docs/0.2.0` directory.
+This should create an `openapi.json` in the `docs/0.2.0` directory.
 
 ```sh
 INFO: 📂 adding app to sys.path
@@ -117,17 +119,17 @@ INFO: 🧾 documentation version='0.2.0' written to docs/0.2.0/openapi.yaml
 
 ## Automate in your CI/CD pipeline
 
-How you’ll integrate the extraction to your CI/CD depends on what you are trying to accomplish. The three most common ways to approach this are:
+How you integrate extraction into your CI/CD depends on what you're trying to achieve. The three most common approaches are:
 
-* Extract the spec locally and commit it to your repository. Let CI/CD verify the committed spec is up-to-date.
-* Extract the spec as part of your CI/CD pipeline, and use the spec as a temporary file to accomplish something (eg. generate a client).
-* Extract the spec as part of your CI/CD pipeline, and commit the generated spec to your repository, when merging to main.
+* Extract the spec locally and commit it to your repository. Have the CI/CD check that the committed spec is up to date.
+* Extract the spec as part of your CI/CD pipeline, and use the spec as a temporary file to accomplish something (e.g. build a client).
+* Extract the spec as part of your CI/CD pipeline, and commit the generated spec to your repository when you merge into main.
 
-The benefit with using a script is that it can also be run locally. Locally committing is often a safe and straight-forward approach, but may occasionally make merging more difficult. If, however, you only need to generate the OpenAPI spec as part of your CI/CD pipeline, you should also consider dedicated runneres.
+The advantage of using a script is that it can also be run locally. Committing locally is often a safe and straightforward approach, but can occasionally make merging more difficult. However, if you only need to generate the OpenAPI spec as part of your CI/CD pipeline, you should also consider dedicated runners.
 
-The benefit of using as part of CI/CD pipeline is that you can pass version argument from outside, and use TAG instead of defined in pyproject.toml file one.
+The advantage of using this as part of the CI/CD pipeline is that you can pass the `version` argument externally, and use `TAG` instead of one defined in the `pyproject.toml`
 
-### Example running script as part of CI/CD pipeline
+### Example of running script as part of CI/CD pipeline
 
 ```sh
 export CICD_TAG=2023-01-release
